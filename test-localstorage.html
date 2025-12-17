@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试 LocalStorage</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .result { margin: 10px 0; padding: 10px; background-color: #f5f5f5; border-radius: 3px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>测试 LocalStorage 功能</h1>
+    
+    <div class="test-section">
+        <h2>1. 测试 LocalStorage 基本功能</h2>
+        <button onclick="testBasicStorage()">测试基本存储</button>
+        <button onclick="clearStorage()">清除存储</button>
+        <div id="basicResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. 测试图片上传和压缩</h2>
+        <input type="file" id="testImage" accept="image/*">
+        <button onclick="testImageUpload()">测试上传和压缩</button>
+        <div id="imageResult" class="result"></div>
+        <div id="imagePreview"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. 查看当前存储状态</h2>
+        <button onclick="checkStorageStatus()">查看状态</button>
+        <div id="statusResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. 测试作品数据保存</h2>
+        <button onclick="testSaveWork()">测试保存作品</button>
+        <div id="workResult" class="result"></div>
+    </div>
+    
+    <script>
+        // 基本存储测试
+        function testBasicStorage() {
+            const resultDiv = document.getElementById('basicResult');
+            try {
+                localStorage.setItem('testKey', 'testValue');
+                const value = localStorage.getItem('testKey');
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `成功！存储的值：${value}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `失败！错误：${error.message}`;
+            }
+        }
+        
+        // 清除存储
+        function clearStorage() {
+            localStorage.clear();
+            const resultDiv = document.getElementById('basicResult');
+            resultDiv.className = 'result success';
+            resultDiv.innerHTML = '已清除所有 LocalStorage 数据';
+        }
+        
+        // 图片压缩函数（与 admin.html 相同）
+        function compressImage(dataURL, quality, maxWidth) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const img = new Image();
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const compressedDataURL = canvas.toDataURL('image/jpeg', quality);
+                        resolve(compressedDataURL);
+                    };
+                    
+                    img.onerror = () => {
+                        reject(new Error('图片加载失败'));
+                    };
+                    
+                    img.src = dataURL;
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+        
+        // 图片上传测试
+        async function testImageUpload() {
+            const fileInput = document.getElementById('testImage');
+            const resultDiv = document.getElementById('imageResult');
+            const previewDiv = document.getElementById('imagePreview');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = '请先选择一张图片';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            
+            try {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const originalImageUrl = e.target.result;
+                    
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `原始图片大小：${(originalImageUrl.length / 1024).toFixed(2)} KB`;
+                    
+                    // 压缩图片
+                    const compressedImageUrl = await compressImage(originalImageUrl, 0.8, 1200);
+                    
+                    resultDiv.innerHTML += `<br>压缩后图片大小：${(compressedImageUrl.length / 1024).toFixed(2)} KB`;
+                    
+                    // 显示预览
+                    previewDiv.innerHTML = `<img src="${compressedImageUrl}" alt="压缩后图片" style="max-width: 100%; max-height: 300px;">`;
+                    
+                    // 测试保存到 localStorage
+                    try {
+                        localStorage.setItem('testImage', compressedImageUrl);
+                        resultDiv.innerHTML += '<br>图片已成功保存到 localStorage';
+                    } catch (error) {
+                        resultDiv.innerHTML += `<br>保存到 localStorage 失败：${error.message}`;
+                    }
+                };
+                
+                reader.onerror = () => {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = '图片读取失败';
+                };
+                
+                reader.readAsDataURL(file);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `测试失败：${error.message}`;
+            }
+        }
+        
+        // 检查存储状态
+        function checkStorageStatus() {
+            const resultDiv = document.getElementById('statusResult');
+            
+            try {
+                const storageSize = calculateLocalStorageSize();
+                const works = localStorage.getItem('works');
+                const worksCount = works ? JSON.parse(works).length : 0;
+                
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `
+                    当前存储大小：${(storageSize / 1024).toFixed(2)} KB<br>
+                    作品数量：${worksCount}<br>
+                    存储键列表：<br>
+                `;
+                
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    const keySize = (value ? value.length : 0) / 1024;
+                    resultDiv.innerHTML += `- ${key} (${keySize.toFixed(2)} KB)<br>`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `检查失败：${error.message}`;
+            }
+        }
+        
+        // 计算 localStorage 大小
+        function calculateLocalStorageSize() {
+            let totalSize = 0;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                totalSize += key.length + (value ? value.length : 0);
+            }
+            return totalSize;
+        }
+        
+        // 测试作品数据保存
+        function testSaveWork() {
+            const resultDiv = document.getElementById('workResult');
+            
+            try {
+                // 创建一个测试作品
+                const testWork = {
+                    id: 'testWork',
+                    title: '测试作品',
+                    category: '测试分类',
+                    year: '2024',
+                    location: '测试地点',
+                    description: '这是一个测试作品',
+                    images: ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=']
+                };
+                
+                // 获取现有作品
+                let works = JSON.parse(localStorage.getItem('works') || '[]');
+                
+                // 添加测试作品
+                works.push(testWork);
+                
+                // 保存到 localStorage
+                const worksJson = JSON.stringify(works);
+                localStorage.setItem('works', worksJson);
+                
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `
+                    作品保存成功！<br>
+                    作品数量：${works.length}<br>
+                    数据大小：${(worksJson.length / 1024).toFixed(2)} KB
+                `;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `保存失败：${error.message}<br>错误堆栈：${error.stack}`;
+            }
+        }
+    </script>
+</body>
+</html>

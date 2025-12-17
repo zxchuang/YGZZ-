@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理 | 设计师作品集</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#000000',
+                        secondary: '#666666',
+                        background: '#FFFFFF',
+                        accent: '#f5f5f5',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .form-input {
+                @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500;
+            }
+            .btn {
+                @apply px-6 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors;
+            }
+            .btn-outline {
+                @apply px-6 py-2 border border-black rounded-md hover:bg-black hover:text-white transition-colors;
+            }
+            .btn-danger {
+                @apply px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors;
+            }
+            .tab-active {
+                @apply border-b-2 border-black;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- 登录模态框 -->
+    <div id="loginModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div class="bg-white p-8 rounded-lg w-full max-w-md">
+            <h2 class="text-2xl font-light mb-6 text-center">后台管理登录</h2>
+            <div class="mb-4">
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+                <input type="password" id="password" class="form-input" placeholder="请输入密码">
+            </div>
+            <div class="text-center">
+                <button id="loginBtn" class="btn w-full">登录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- 头部 -->
+        <header class="mb-8">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-light">后台管理系统</h1>
+                <button id="logoutBtn" class="btn-outline">退出登录</button>
+            </div>
+        </header>
+
+        <!-- 导航标签 -->
+        <nav class="border-b border-gray-200 mb-8">
+            <ul class="flex space-x-8">
+                <li><a href="#" class="tab-link tab-active py-4 px-1 block" data-tab="basic-info">基本信息</a></li>
+                <li><a href="#" class="tab-link py-4 px-1 block" data-tab="works-management">作品管理</a></li>
+                <li><a href="#" class="tab-link py-4 px-1 block" data-tab="about-management">关于管理</a></li>
+                <li><a href="#" class="tab-link py-4 px-1 block" data-tab="data-backup">数据备份</a></li>
+            </ul>
+        </nav>
+
+        <!-- 标签内容 -->
+        <div class="tab-content">
+            <!-- 基本信息 -->
+            <div id="basic-info" class="tab-pane active">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-xl font-light mb-6">网站基本信息</h2>
+                    <form id="basicInfoForm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="siteTitle" class="block text-sm font-medium text-gray-700 mb-1">网站标题</label>
+                                <input type="text" id="siteTitle" class="form-input" placeholder="请输入网站标题">
+                            </div>
+                            <div>
+                                <label for="siteSubtitle" class="block text-sm font-medium text-gray-700 mb-1">网站副标题</label>
+                                <input type="text" id="siteSubtitle" class="form-input" placeholder="请输入网站副标题">
+                            </div>
+                            <div>
+                                <label for="worksSectionTitle" class="block text-sm font-medium text-gray-700 mb-1">作品区标题</label>
+                                <input type="text" id="worksSectionTitle" class="form-input" placeholder="请输入作品区标题">
+                            </div>
+                            <div>
+                                <label for="worksSectionDescription" class="block text-sm font-medium text-gray-700 mb-1">作品区描述</label>
+                                <input type="text" id="worksSectionDescription" class="form-input" placeholder="请输入作品区描述">
+                            </div>
+                        </div>
+                        <div class="mt-8 flex justify-end space-x-4">
+                            <button type="button" id="previewBasicInfo" class="btn-outline">预览</button>
+                            <button type="submit" class="btn">保存</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 预览区域 -->
+                <div id="previewArea" class="mt-8 bg-white p-6 rounded-lg shadow-sm hidden">
+                    <h2 class="text-xl font-light mb-6">预览效果</h2>
+                    <div class="border p-4 rounded-lg">
+                        <h1 id="previewTitle" class="text-4xl font-light mb-2">预览标题</h1>
+                        <p id="previewSubtitle" class="text-gray-600 mb-6">预览副标题</p>
+                        <h2 id="previewWorksTitle" class="text-2xl font-light mb-2">预览作品区标题</h2>
+                        <p id="previewWorksDescription" class="text-gray-600">预览作品区描述</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 作品管理 -->
+            <div id="works-management" class="tab-pane hidden">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-light">作品管理</h2>
+                        <button id="addWorkBtn" class="btn">添加作品</button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">序号</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">标题</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">类别</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">年份</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">地点</th>
+                                    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="worksTableBody" class="bg-white divide-y divide-gray-200">
+                                <!-- 作品列表将通过JavaScript动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 关于管理 -->
+            <div id="about-management" class="tab-pane hidden">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-xl font-light mb-6">关于页面管理</h2>
+                    <form id="aboutForm">
+                        <div class="mb-6">
+                            <label for="aboutTitle" class="block text-sm font-medium text-gray-700 mb-1">标题</label>
+                            <input type="text" id="aboutTitle" class="form-input" placeholder="请输入标题">
+                        </div>
+                        <div class="mb-6">
+                            <label for="aboutDescription" class="block text-sm font-medium text-gray-700 mb-1">描述</label>
+                            <textarea id="aboutDescription" rows="6" class="form-input" placeholder="请输入描述"></textarea>
+                        </div>
+                        <div class="mb-6">
+                            <label for="aboutImage" class="block text-sm font-medium text-gray-700 mb-1">图片</label>
+                            <div id="aboutImageUploadContainer" class="border-2 border-dashed border-gray-300 rounded-md p-6 text-center hover:border-blue-500 transition-colors">
+                                <input type="file" id="aboutImage" class="hidden" accept="image/*">
+                                <button type="button" id="uploadAboutImageBtn" class="btn-outline mb-2">上传图片</button>
+                                <p class="text-sm text-gray-500">支持JPG、PNG格式</p>
+                                <p class="text-xs text-gray-400 mt-1">或拖拽图片到此处上传</p>
+                                <div id="aboutImagePreview" class="mt-4 hidden">
+                                    <img src="" alt="预览图片" class="max-h-40 mx-auto">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">设计板块</label>
+                            <div id="designAreasContainer">
+                                <div class="design-area-item flex items-center mb-2">
+                                    <input type="text" class="form-input flex-grow mr-2" placeholder="设计板块内容">
+                                    <button type="button" class="text-red-500 hover:text-red-700 delete-design-area">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" id="addDesignAreaBtn" class="btn-outline mt-2">添加设计板块</button>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">荣获奖项</label>
+                            <div id="awardsContainer">
+                                <div class="award-item flex items-center mb-2">
+                                    <input type="text" class="form-input flex-grow mr-2" placeholder="获奖内容（格式：年份 - 奖项名称）">
+                                    <button type="button" class="text-red-500 hover:text-red-700 delete-award">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" id="addAwardBtn" class="btn-outline mt-2">添加奖项</button>
+                        </div>
+                        <div class="mt-8 flex justify-end space-x-4">
+                            <button type="submit" class="btn">保存</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 数据备份 -->
+            <div id="data-backup" class="tab-pane hidden">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-xl font-light mb-6">数据备份与恢复</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-medium mb-4">导出数据</h3>
+                            <p class="text-gray-600 mb-4">将当前网站数据导出为JSON文件，用于备份或迁移。</p>
+                            <button id="exportDataBtn" class="btn">导出数据</button>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-medium mb-4">导入数据</h3>
+                            <p class="text-gray-600 mb-4">从JSON文件导入网站数据，将覆盖当前数据。</p>
+                            <div class="flex items-center space-x-4">
+                                <input type="file" id="importDataFile" class="hidden" accept=".json">
+                                <button id="importDataBtn" class="btn-outline">选择文件</button>
+                                <span id="importFileName" class="text-sm text-gray-500">未选择文件</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-gray-200">
+                        <h3 class="text-lg font-medium mb-4">数据清空</h3>
+                        <p class="text-gray-600 mb-4">清空所有网站数据，此操作不可恢复。</p>
+                        <button id="clearDataBtn" class="btn-danger">清空数据</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑作品模态框 -->
+    <div id="workModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+        <div class="bg-white p-8 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="workModalTitle" class="text-2xl font-light">添加作品</h2>
+                <button id="closeWorkModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="workForm">
+                <input type="hidden" id="workId">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="workTitle" class="block text-sm font-medium text-gray-700 mb-1">作品标题</label>
+                        <input type="text" id="workTitle" class="form-input" placeholder="请输入作品标题">
+                    </div>
+                    <div>
+                        <label for="workCategory" class="block text-sm font-medium text-gray-700 mb-1">作品类别</label>
+                        <input type="text" id="workCategory" class="form-input" placeholder="请输入作品类别">
+                    </div>
+                    <div>
+                        <label for="workYear" class="block text-sm font-medium text-gray-700 mb-1">年份</label>
+                        <input type="text" id="workYear" class="form-input" placeholder="请输入年份">
+                    </div>
+                    <div>
+                        <label for="workLocation" class="block text-sm font-medium text-gray-700 mb-1">地点</label>
+                        <input type="text" id="workLocation" class="form-input" placeholder="请输入地点">
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label for="workDescription" class="block text-sm font-medium text-gray-700 mb-1">作品描述</label>
+                    <textarea id="workDescription" rows="4" class="form-input" placeholder="请输入作品描述"></textarea>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">作品图片</label>
+                    <div id="workImageUploadContainer" class="border-2 border-dashed border-gray-300 rounded-md p-6 text-center hover:border-blue-500 transition-colors">
+                        <input type="file" id="workImages" class="hidden" multiple accept="image/*">
+                        <button type="button" id="uploadImagesBtn" class="btn-outline mb-2">上传图片</button>
+                        <p class="text-sm text-gray-500">支持多张图片上传，数量不限</p>
+                        <p class="text-xs text-gray-400 mt-1">或拖拽图片到此处上传</p>
+                        <div id="imagePreviewContainer" class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-end space-x-4">
+                    <button type="button" id="cancelWorkBtn" class="btn-outline">取消</button>
+                    <button type="submit" class="btn">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 默认密码（实际使用时应更改为更安全的密码）
+        const ADMIN_PASSWORD = 'zc1230123';
+        
+        // 初始化数据
+        const defaultSiteInfo = {
+            title: "予共筑造",
+            subtitle: "给予不同客户共同美好事物，致力于美好生活场景设计。",
+            worksSectionTitle: "精选作品",
+            worksSectionDescription: "过往项目案例"
+        };
+        
+        const defaultWorks = [
+            {
+                id: "work1",
+                title: "住宅设计",
+                category: "室内设计",
+                description: "This project is a minimalist residence designed for an art collector, located in a high-rise apartment in the center of Shanghai. The design concept is to create a serene, spacious living space where artworks become the protagonist of the space while providing a comfortable living experience.",
+                year: "2024",
+                location: "杭州",
+                images: [
+                    "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/840866df72bc4a9b97d946a636ae1a27~tplv-a9rns2rl98-image.image?rcl=202512161040367BBAF11667D8C3CE0FE9&rk3s=8e244e95&rrcfp=e75484ac&x-expires=1766457636&x-signature=Qob4L%!B(MISSING)Dk9zDLkfo38fpxjbuhr5I%!D(MISSING)"
+                ]
+            }
+        ];
+        
+        // DOM元素
+        const loginModal = document.getElementById('loginModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const passwordInput = document.getElementById('password');
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        const basicInfoForm = document.getElementById('basicInfoForm');
+        const previewBasicInfo = document.getElementById('previewBasicInfo');
+        const previewArea = document.getElementById('previewArea');
+        const addWorkBtn = document.getElementById('addWorkBtn');
+        const workModal = document.getElementById('workModal');
+        const workModalTitle = document.getElementById('workModalTitle');
+        const closeWorkModal = document.getElementById('closeWorkModal');
+        const cancelWorkBtn = document.getElementById('cancelWorkBtn');
+        const workForm = document.getElementById('workForm');
+        const worksTableBody = document.getElementById('worksTableBody');
+        const exportDataBtn = document.getElementById('exportDataBtn');
+        const importDataBtn = document.getElementById('importDataBtn');
+        const importDataFile = document.getElementById('importDataFile');
+        const importFileName = document.getElementById('importFileName');
+        const clearDataBtn = document.getElementById('clearDataBtn');
+        const uploadImagesBtn = document.getElementById('uploadImagesBtn');
+        const workImages = document.getElementById('workImages');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const workImageUploadContainer = document.getElementById('workImageUploadContainer');
+        
+        // 关于页面管理元素
+        const aboutForm = document.getElementById('aboutForm');
+        const uploadAboutImageBtn = document.getElementById('uploadAboutImageBtn');
+        const aboutImage = document.getElementById('aboutImage');
+        const aboutImagePreview = document.getElementById('aboutImagePreview');
+        const aboutImageUploadContainer = document.getElementById('aboutImageUploadContainer');
+        const addDesignAreaBtn = document.getElementById('addDesignAreaBtn');
+        const designAreasContainer = document.getElementById('designAreasContainer');
+        const addAwardBtn = document.getElementById('addAwardBtn');
+        const awardsContainer = document.getElementById('awardsContainer');
+        
+        // 页面加载时检查登录状态
+        document.addEventListener('DOMContentLoaded', () => {
+            const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                loginModal.classList.remove('hidden');
+            } else {
+                loginModal.classList.add('hidden');
+                initializeData();
+                loadBasicInfo();
+                loadWorks();
+                loadAboutInfo();
+            }
+        });
+        
+        // 登录功能
+        loginBtn.addEventListener('click', () => {
+            if (passwordInput.value === ADMIN_PASSWORD) {
+                localStorage.setItem('adminLoggedIn', 'true');
+                loginModal.classList.add('hidden');
+                initializeData();
+                loadBasicInfo();
+                loadWorks();
+                loadAboutInfo();
+            } else {
+                alert('密码错误，请重试！');
+                passwordInput.value = '';
+            }
+        });
+        
+        // 退出登录
+        logoutBtn.addEventListener('click', () => {
+            localStorage.setItem('adminLoggedIn', 'false');
+            window.location.href = 'index.html';
+        });
+        
+        // 标签切换功能
+        tabLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // 移除所有标签的活动状态
+                tabLinks.forEach(item => item.classList.remove('tab-active'));
+                tabPanes.forEach(item => item.classList.add('hidden'));
+                
+                // 添加当前标签的活动状态
+                link.classList.add('tab-active');
+                const tabId = link.getAttribute('data-tab');
+                document.getElementById(tabId).classList.remove('hidden');
+            });
+        });
+        
+        // 初始化数据
+        function initializeData() {
+            // 如果localStorage中没有数据，则初始化默认数据
+            if (!localStorage.getItem('siteInfo')) {
+                localStorage.setItem('siteInfo', JSON.stringify(defaultSiteInfo));
+            }
+            
+            if (!localStorage.getItem('works')) {
+                localStorage.setItem('works', JSON.stringify(defaultWorks));
+            }
+            
+            if (!localStorage.getItem('aboutInfo')) {
+                const defaultAboutInfo = {
+                    title: "关于予共筑造",
+                    description: "予共筑造由国内一线设计师组成的设计团队。团队成员曾服务过国内一线地产公司：万科、融信、融创、正荣、金地、旭辉，协信、普罗等地产商。目前团队主要从事高端楼盘会所设计、商业设计、软装设计等设计工作。",
+                    image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/86cede4ef50f47c48c04cfdeb9d25fb1~tplv-a9rns2rl98-image.image?rcl=20251216160829E409A1B6780165856DC4&rk3s=8e244e95&rrcfp=e75484ac&x-expires=1766477309&x-signature=De8bRTo7Zzr%2BbLIOZZhpgSfXJs%3D",
+                    designAreas: [
+                        "地产设计/会所设计/住宅设计等",
+                        "办公设计/商业设计等"
+                    ],
+                    awards: [
+                        "2024年 - 第27届 Andrew Martin 国际室内设计大奖中国区入选",
+                        "2024年 - 荣获2024年度MUSE DESIGN白金奖",
+                        "2023年 - \"ID+G\"金创意奖国际空间设计大赛—国际创新设计奖",
+                        "2022年 - 金盘网 浙江、上海赛区最佳售楼空间",
+                        "2021年 - REARD全球地产设计大奖 居住类室内铜奖",
+                        "2020年 - 15届金外滩奖 最佳样板间 优秀奖"
+                    ]
+                };
+                localStorage.setItem('aboutInfo', JSON.stringify(defaultAboutInfo));
+            }
+        }
+        
+        // 加载基本信息
+        function loadBasicInfo() {
+            const siteInfo = JSON.parse(localStorage.getItem('siteInfo'));
+            
+            document.getElementById('siteTitle').value = siteInfo.title;
+            document.getElementById('siteSubtitle').value = siteInfo.subtitle;
+            document.getElementById('worksSectionTitle').value = siteInfo.worksSectionTitle;
+            document.getElementById('worksSectionDescription').value = siteInfo.worksSectionDescription;
+        }
+        
+        // 保存基本信息
+        basicInfoForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const siteInfo = {
+                title: document.getElementById('siteTitle').value,
+                subtitle: document.getElementById('siteSubtitle').value,
+                worksSectionTitle: document.getElementById('worksSectionTitle').value,
+                worksSectionDescription: document.getElementById('worksSectionDescription').value
+            };
+            
+            localStorage.setItem('siteInfo', JSON.stringify(siteInfo));
+            localStorage.setItem('dataUpdated', 'true');
+            alert('基本信息保存成功！');
+        });
+        
+        // 预览基本信息
+        previewBasicInfo.addEventListener('click', () => {
+            const title = document.getElementById('siteTitle').value;
+            const subtitle = document.getElementById('siteSubtitle').value;
+            const worksTitle = document.getElementById('worksSectionTitle').value;
+            const worksDescription = document.getElementById('worksSectionDescription').value;
+            
+            document.getElementById('previewTitle').textContent = title || '预览标题';
+            document.getElementById('previewSubtitle').textContent = subtitle || '预览副标题';
+            document.getElementById('previewWorksTitle').textContent = worksTitle || '预览作品区标题';
+            document.getElementById('previewWorksDescription').textContent = worksDescription || '预览作品区描述';
+            
+            previewArea.classList.remove('hidden');
+        });
+        
+        // 加载作品列表
+        function loadWorks() {
+            const works = JSON.parse(localStorage.getItem('works'));
+            worksTableBody.innerHTML = '';
+            
+            works.forEach((work, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">${index + 1}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${work.title}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${work.category}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${work.year}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${work.location}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="text-blue-600 hover:text-blue-900 mr-3 edit-work" data-id="${work.id}">编辑</button>
+                        <button class="text-red-600 hover:text-red-900 delete-work" data-id="${work.id}">删除</button>
+                    </td>
+                `;
+                worksTableBody.appendChild(row);
+            });
+            
+            // 添加编辑和删除事件监听
+            document.querySelectorAll('.edit-work').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const workId = btn.getAttribute('data-id');
+                    editWork(workId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-work').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const workId = btn.getAttribute('data-id');
+                    deleteWork(workId);
+                });
+            });
+        }
+        
+        // 打开添加作品模态框
+        addWorkBtn.addEventListener('click', () => {
+            workModalTitle.textContent = '添加作品';
+            workForm.reset();
+            document.getElementById('workId').value = '';
+            imagePreviewContainer.innerHTML = '';
+            workModal.classList.remove('hidden');
+        });
+        
+        // 关闭作品模态框
+        closeWorkModal.addEventListener('click', () => {
+            workModal.classList.add('hidden');
+        });
+        
+        cancelWorkBtn.addEventListener('click', () => {
+            workModal.classList.add('hidden');
+        });
+        
+        // 编辑作品
+        function editWork(workId) {
+            const works = JSON.parse(localStorage.getItem('works'));
+            const work = works.find(w => w.id === workId);
+            
+            if (work) {
+                workModalTitle.textContent = '编辑作品';
+                document.getElementById('workId').value = work.id;
+                document.getElementById('workTitle').value = work.title;
+                document.getElementById('workCategory').value = work.category;
+                document.getElementById('workYear').value = work.year;
+                document.getElementById('workLocation').value = work.location;
+                document.getElementById('workDescription').value = work.description;
+                
+                // 显示图片预览
+                imagePreviewContainer.innerHTML = '';
+                if (work.images && work.images.length > 0) {
+                    work.images.forEach(imageUrl => {
+                        const imagePreview = document.createElement('div');
+                        imagePreview.className = 'relative';
+                        imagePreview.innerHTML = `
+                            <img src="${imageUrl}" alt="作品图片" class="w-full h-24 object-cover rounded-md">
+                            <button type="button" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center delete-image">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        `;
+                        imagePreviewContainer.appendChild(imagePreview);
+                    });
+                }
+                
+                // 添加统一的删除图片事件监听
+                document.querySelectorAll('.delete-image').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        btn.parentElement.remove();
+                    });
+                });
+                
+                workModal.classList.remove('hidden');
+            }
+        }
+        
+        // 删除作品
+        function deleteWork(workId) {
+            if (confirm('确定要删除这个作品吗？')) {
+                let works = JSON.parse(localStorage.getItem('works'));
+                works = works.filter(work => work.id !== workId);
+                localStorage.setItem('works', JSON.stringify(works));
+                localStorage.setItem('dataUpdated', 'true');
+                loadWorks();
+            }
+        }
+        
+        // 保存作品
+        workForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            console.log('=== 开始保存作品 ===');
+            
+            try {
+                // 读取表单数据
+                const workId = document.getElementById('workId').value;
+                const title = document.getElementById('workTitle').value;
+                const category = document.getElementById('workCategory').value;
+                const year = document.getElementById('workYear').value;
+                const location = document.getElementById('workLocation').value;
+                const description = document.getElementById('workDescription').value;
+                
+                console.log('1. 表单数据:', {
+                    workId,
+                    title,
+                    category,
+                    year,
+                    location,
+                    description,
+                    hasImages: document.querySelectorAll('#imagePreviewContainer img').length > 0
+                });
+                
+                // 验证必填字段
+                if (!title.trim()) {
+                    console.log('2. 验证失败: 标题为空');
+                    alert('请填写作品标题！');
+                    return;
+                }
+                
+                if (!category.trim()) {
+                    console.log('2. 验证失败: 类别为空');
+                    alert('请填写作品类别！');
+                    return;
+                }
+                console.log('2. 表单验证通过');
+                
+                // 获取当前作品的图片
+                const currentImages = [];
+                const imageElements = document.querySelectorAll('#imagePreviewContainer img');
+                console.log('3. 找到图片元素数量:', imageElements.length);
+                
+                let totalImageSize = 0;
+                imageElements.forEach((img, index) => {
+                    // 检查图片URL是否有效
+                    if (img.src && img.src.startsWith('data:image/')) {
+                        const imageSizeKB = (img.src.length / 1024).toFixed(2);
+                        totalImageSize += parseFloat(imageSizeKB);
+                        console.log(`   图片${index + 1}大小: ${imageSizeKB} KB`);
+                        currentImages.push(img.src);
+                    } else {
+                        console.warn(`   图片${index + 1}的URL无效，跳过保存`);
+                    }
+                });
+                console.log('3. 收集到的图片数量:', currentImages.length, '总大小:', totalImageSize.toFixed(2), 'KB');
+                
+                // 获取或初始化作品数据
+                let works = [];
+                const savedWorks = localStorage.getItem('works');
+                if (savedWorks) {
+                    try {
+                        works = JSON.parse(savedWorks);
+                        console.log('4. 从localStorage加载作品数:', works.length);
+                    } catch (parseError) {
+                        console.error('解析localStorage作品数据失败:', parseError);
+                        alert('作品数据解析失败，将创建新的作品列表');
+                        works = [];
+                    }
+                } else {
+                    console.log('4. localStorage中没有作品数据，创建新数组');
+                }
+                
+                // 创建或更新作品对象
+                const workData = {
+                    title: title.trim(),
+                    category: category.trim(),
+                    year: year.trim(),
+                    location: location.trim(),
+                    description: description.trim(),
+                    images: currentImages
+                };
+                
+                if (workId) {
+                    // 编辑现有作品
+                    console.log('5. 编辑模式，作品ID:', workId);
+                    const workIndex = works.findIndex(work => work.id === workId);
+                    console.log('   找到作品索引:', workIndex);
+                    
+                    if (workIndex !== -1) {
+                        works[workIndex] = {
+                            ...works[workIndex],
+                            ...workData
+                        };
+                        console.log('   作品更新成功');
+                    } else {
+                        console.warn('   未找到指定ID的作品，将作为新作品添加');
+                        workData.id = workId;
+                        works.push(workData);
+                    }
+                } else {
+                    // 添加新作品
+                    console.log('5. 添加新模式');
+                    // 确保ID唯一
+                    const maxId = works.reduce((max, work) => {
+                        const idNum = parseInt(work.id.replace('work', '')) || 0;
+                        return Math.max(max, idNum);
+                    }, 0);
+                    
+                    workData.id = 'work' + (maxId + 1);
+                    works.push(workData);
+                    console.log('   新作品添加成功，ID:', workData.id);
+                }
+                
+                // 检查数据大小
+                const worksJson = JSON.stringify(works);
+                const dataSizeKB = (worksJson.length / 1024).toFixed(2);
+                const dataSizeMB = (worksJson.length / (1024 * 1024)).toFixed(2);
+                console.log('6. 保存前数据大小:', dataSizeKB, 'KB (', dataSizeMB, 'MB )');
+                
+                // 检查localStorage容量限制（通常为5-10MB）
+                if (worksJson.length > 5 * 1024 * 1024) { // 5MB限制
+                    console.warn('数据大小超过5MB，可能导致localStorage保存失败');
+                    alert('作品数据过大，可能导致保存失败。建议减少图片数量或使用更小的图片。');
+                    
+                    // 提供选项是否继续保存
+                    if (!confirm('确定要继续保存吗？可能会导致保存失败或性能问题。')) {
+                        return;
+                    }
+                }
+                
+                try {
+                    // 先尝试保存一个备份
+                    localStorage.setItem('works_backup', savedWorks || JSON.stringify([]));
+                    console.log('6. 已创建作品数据备份');
+                    
+                    // 保存到localStorage
+                    localStorage.setItem('works', worksJson);
+                    console.log('7. 作品数据保存到localStorage成功');
+                    
+                    // 验证保存是否成功
+                    const savedData = localStorage.getItem('works');
+                    if (!savedData) {
+                        throw new Error('localStorage保存后读取失败');
+                    }
+                    
+                    // 验证数据完整性
+                    const parsedData = JSON.parse(savedData);
+                    if (!Array.isArray(parsedData) || parsedData.length !== works.length) {
+                        throw new Error('保存的数据不完整或格式错误');
+                    }
+                    
+                    console.log('8. 验证保存成功，数据完整');
+                    
+                } catch (storageError) {
+                    console.error('localStorage保存失败:', storageError);
+                    
+                    // 尝试恢复备份
+                    if (localStorage.getItem('works_backup')) {
+                        console.log('尝试恢复备份数据...');
+                        localStorage.setItem('works', localStorage.getItem('works_backup'));
+                    }
+                    
+                    if (storageError.name === 'QuotaExceededError') {
+                        alert('localStorage存储空间已满！请尝试：\n1. 删除一些不需要的作品\n2. 使用更小的图片\n3. 清除浏览器缓存\n4. 使用其他浏览器');
+                    } else {
+                        alert('保存失败：' + storageError.message + '\n请查看控制台获取详细信息。');
+                    }
+                    return;
+                }
+                
+                // 清理备份
+                localStorage.removeItem('works_backup');
+                
+                localStorage.setItem('dataUpdated', 'true');
+                console.log('9. 数据更新标记设置成功');
+                
+                // 关闭模态框并重新加载作品列表
+                workModal.classList.add('hidden');
+                console.log('10. 关闭模态框');
+                
+                loadWorks();
+                console.log('11. 重新加载作品列表');
+                console.log('=== 保存作品完成 ===');
+                
+                // 显示成功消息
+                alert('作品保存成功！');
+                
+            } catch (error) {
+                console.error('=== 保存作品时发生错误 ===:', error);
+                console.error('错误类型:', error.name);
+                console.error('错误消息:', error.message);
+                console.error('错误堆栈:', error.stack);
+                alert('保存失败，请查看控制台获取详细错误信息！');
+            }
+        });
+        
+        // 图片上传处理函数
+        function handleImageUpload(files = null) {
+            console.log('=== 开始处理图片上传 ===');
+            // 如果没有提供文件，尝试从文件输入获取
+            if (!files) {
+                const workImagesInput = document.getElementById('workImages');
+                if (workImagesInput && workImagesInput.files.length > 0) {
+                    files = workImagesInput.files;
+                    console.log('从文件输入获取到', files.length, '个文件');
+                } else {
+                    alert('请选择要上传的图片！');
+                    return;
+                }
+            }
+            
+            // 检查文件数量
+            if (files.length === 0) {
+                alert('请选择要上传的图片！');
+                return;
+            }
+            
+            // 显示上传中状态
+            const uploadStatus = document.createElement('div');
+            uploadStatus.id = 'uploadStatus';
+            uploadStatus.className = 'mb-4 p-2 bg-blue-100 text-blue-700 rounded-md text-center';
+            uploadStatus.textContent = '上传中...';
+            workImageUploadContainer.insertBefore(uploadStatus, imagePreviewContainer);
+            
+            // 处理所有上传的图片文件
+            let uploadedCount = 0;
+            const totalFiles = files.length;
+            
+            Array.from(files).forEach(file => {
+                console.log('处理文件:', file.name, '类型:', file.type, '大小:', (file.size / 1024).toFixed(2), 'KB');
+                
+                // 检查文件类型
+                if (!file.type.startsWith('image/')) {
+                    console.warn(`文件"${file.name}"不是图片文件，跳过处理`);
+                    uploadedCount++;
+                    return;
+                }
+                
+                // 使用FileReader读取文件
+                const reader = new FileReader();
+                
+                reader.onload = async function(e) {
+                    uploadedCount++;
+                    
+                    try {
+                        // 获取图片的dataURL
+                        const originalImageUrl = e.target.result;
+                        
+                        // 检查dataURL是否有效
+                        if (!originalImageUrl || !originalImageUrl.startsWith('data:image/')) {
+                            throw new Error('无效的图片dataURL');
+                        }
+                        
+                        // 压缩图片
+                        console.log('开始压缩图片...');
+                        const imageUrl = await compressImage(originalImageUrl, 0.6, 600); // 降低质量和宽度以减少文件大小
+                        console.log('图片上传成功，原dataURL长度:', (originalImageUrl.length / 1024).toFixed(2), 'KB', '压缩后长度:', (imageUrl.length / 1024).toFixed(2), 'KB');
+                        
+                        // 显示图片预览
+                        const imagePreview = document.createElement('div');
+                        imagePreview.className = 'relative';
+                        imagePreview.innerHTML = `
+                            <img src="${imageUrl}" alt="作品图片" class="w-full h-24 object-cover rounded-md">
+                            <span class="absolute top-1 left-1 bg-green-500 text-white text-xs px-1 rounded-full">上传成功</span>
+                            <button type="button" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center delete-image">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        `;
+                        imagePreviewContainer.appendChild(imagePreview);
+                        
+                        // 添加删除图片预览事件监听
+                        imagePreview.querySelector('.delete-image').addEventListener('click', () => {
+                            console.log('删除图片预览');
+                            imagePreview.remove();
+                        });
+                        
+                        // 如果所有文件都上传完成，更新状态
+                        if (uploadedCount === totalFiles) {
+                            uploadStatus.className = 'mb-4 p-2 bg-green-100 text-green-700 rounded-md text-center';
+                            uploadStatus.textContent = '所有图片上传成功！';
+                            
+                            // 3秒后自动移除上传状态提示
+                            setTimeout(() => uploadStatus.remove(), 3000);
+                        }
+                    } catch (error) {
+                        console.error('处理上传图片时发生错误:', error);
+                        alert('图片处理失败，请重试！错误信息：' + error.message);
+                    }
+                };
+                
+                reader.onerror = function() {
+                    uploadedCount++;
+                    console.error(`图片上传失败：${file.name}`);
+                    
+                    // 如果所有文件都处理完成，更新状态
+                    if (uploadedCount === totalFiles) {
+                        uploadStatus.className = 'mb-4 p-2 bg-red-100 text-red-700 rounded-md text-center';
+                        uploadStatus.textContent = '部分图片上传失败！';
+                        setTimeout(() => uploadStatus.remove(), 3000);
+                    }
+                };
+                
+                reader.onabort = function() {
+                    uploadedCount++;
+                    console.error(`图片上传被中止：${file.name}`);
+                };
+                
+                // 开始读取文件
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // 点击上传图片按钮，触发文件选择
+        uploadImagesBtn.addEventListener('click', () => {
+            document.getElementById('workImages').click();
+        });
+        
+        // 文件选择变化时，自动上传
+        document.getElementById('workImages').addEventListener('change', (e) => {
+            handleImageUpload(e.target.files);
+        });
+        
+        // 图片压缩函数
+        function compressImage(dataURL, quality, maxWidth) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const img = new Image();
+                    img.onload = () => {
+                        // 计算压缩后的尺寸
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // 如果图片宽度超过maxWidth，按比例缩小
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        
+                        // 创建Canvas元素
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        // 绘制图片到Canvas
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // 将Canvas转换为dataURL（压缩图片）
+                        const compressedDataURL = canvas.toDataURL('image/jpeg', quality);
+                        resolve(compressedDataURL);
+                    };
+                    
+                    img.onerror = () => {
+                        reject(new Error('图片加载失败'));
+                    };
+                    
+                    // 加载图片
+                    img.src = dataURL;
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+        
+        // 拖拽上传图片
+        workImageUploadContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            workImageUploadContainer.classList.add('border-blue-500', 'bg-blue-50');
+        });
+        
+        workImageUploadContainer.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            workImageUploadContainer.classList.remove('border-blue-500', 'bg-blue-50');
+        });
+        
+        workImageUploadContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            workImageUploadContainer.classList.remove('border-blue-500', 'bg-blue-50');
+            
+            // 处理拖拽的图片文件
+            const files = e.dataTransfer.files;
+            handleImageUpload(files);
+        });
+        
+        // 导出数据
+        exportDataBtn.addEventListener('click', () => {
+            const siteInfo = JSON.parse(localStorage.getItem('siteInfo'));
+            const works = JSON.parse(localStorage.getItem('works'));
+            
+            const data = {
+                siteInfo,
+                works,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'designer-portfolio-backup.json';
+            link.click();
+        });
+        
+        // 导入数据
+        importDataBtn.addEventListener('click', () => {
+            importDataFile.click();
+        });
+        
+        importDataFile.addEventListener('change', () => {
+            const file = importDataFile.files[0];
+            
+            if (file) {
+                importFileName.textContent = file.name;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        if (confirm('确定要导入数据吗？这将覆盖当前所有数据！')) {
+                            if (data.siteInfo) {
+                                localStorage.setItem('siteInfo', JSON.stringify(data.siteInfo));
+                                loadBasicInfo();
+                            }
+                            
+                            if (data.works) {
+                                localStorage.setItem('works', JSON.stringify(data.works));
+                                localStorage.setItem('dataUpdated', 'true');
+                                loadWorks();
+                            }
+                            
+                            alert('数据导入成功！');
+                            importFileName.textContent = '未选择文件';
+                            importDataFile.value = '';
+                        }
+                    } catch (error) {
+                        alert('导入失败，请检查文件格式是否正确！');
+                        importFileName.textContent = '未选择文件';
+                        importDataFile.value = '';
+                    }
+                };
+                
+                reader.readAsText(file);
+            }
+        });
+        
+        // 加载关于页面信息
+        function loadAboutInfo() {
+            const aboutInfo = JSON.parse(localStorage.getItem('aboutInfo'));
+            
+            document.getElementById('aboutTitle').value = aboutInfo.title;
+            document.getElementById('aboutDescription').value = aboutInfo.description;
+            
+            // 显示图片预览
+            if (aboutInfo.image) {
+                aboutImagePreview.querySelector('img').src = aboutInfo.image;
+                aboutImagePreview.classList.remove('hidden');
+            }
+            
+            // 加载设计板块
+            designAreasContainer.innerHTML = '';
+            aboutInfo.designAreas.forEach(area => {
+                addDesignAreaItem(area);
+            });
+            
+            // 加载奖项
+            awardsContainer.innerHTML = '';
+            aboutInfo.awards.forEach(award => {
+                addAwardItem(award);
+            });
+        }
+        
+        // 添加设计板块项
+        function addDesignAreaItem(value = '') {
+            const item = document.createElement('div');
+            item.className = 'design-area-item flex items-center mb-2';
+            item.innerHTML = `
+                <input type="text" class="form-input flex-grow mr-2" placeholder="设计板块内容" value="${value}">
+                <button type="button" class="text-red-500 hover:text-red-700 delete-design-area">
+                    <i class="fa fa-times"></i>
+                </button>
+            `;
+            designAreasContainer.appendChild(item);
+            
+            // 添加删除事件
+            item.querySelector('.delete-design-area').addEventListener('click', () => {
+                item.remove();
+            });
+        }
+        
+        // 添加奖项项
+        function addAwardItem(value = '') {
+            const item = document.createElement('div');
+            item.className = 'award-item flex items-center mb-2';
+            item.innerHTML = `
+                <input type="text" class="form-input flex-grow mr-2" placeholder="获奖内容（格式：年份 - 奖项名称）" value="${value}">
+                <button type="button" class="text-red-500 hover:text-red-700 delete-award">
+                    <i class="fa fa-times"></i>
+                </button>
+            `;
+            awardsContainer.appendChild(item);
+            
+            // 添加删除事件
+            item.querySelector('.delete-award').addEventListener('click', () => {
+                item.remove();
+            });
+        }
+        
+        // 关于页面图片上传处理函数
+        function handleAboutImageUpload(files = null) {
+            // 如果没有提供文件，尝试从文件输入获取
+            if (!files) {
+                const aboutImageInput = document.getElementById('aboutImage');
+                if (aboutImageInput && aboutImageInput.files.length > 0) {
+                    files = aboutImageInput.files;
+                } else {
+                    alert('请选择要上传的图片！');
+                    return;
+                }
+            }
+            
+            // 只处理第一张图片
+            const file = files[0];
+            
+            // 检查文件类型
+            if (!file.type.startsWith('image/')) {
+                alert(`"${file.name}"不是图片文件！`);
+                return;
+            }
+            
+            // 显示上传中状态
+            const uploadStatus = document.createElement('div');
+            uploadStatus.id = 'aboutUploadStatus';
+            uploadStatus.className = 'mb-4 p-2 bg-blue-100 text-blue-700 rounded-md text-center';
+            uploadStatus.textContent = '上传中...';
+            aboutImageUploadContainer.insertBefore(uploadStatus, aboutImagePreview);
+            
+            // 使用FileReader读取文件
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                // 获取图片的dataURL
+                const imageUrl = e.target.result;
+                
+                // 更新上传状态为成功
+                uploadStatus.className = 'mb-4 p-2 bg-green-100 text-green-700 rounded-md text-center';
+                uploadStatus.textContent = '上传成功！';
+                
+                // 显示图片预览
+                aboutImagePreview.querySelector('img').src = imageUrl;
+                aboutImagePreview.classList.remove('hidden');
+                
+                // 3秒后自动移除上传状态提示
+                setTimeout(() => uploadStatus.remove(), 3000);
+            };
+            
+            reader.onerror = function() {
+                // 更新上传状态为失败
+                uploadStatus.className = 'mb-4 p-2 bg-red-100 text-red-700 rounded-md text-center';
+                uploadStatus.textContent = '上传失败！';
+                setTimeout(() => uploadStatus.remove(), 3000);
+            };
+            
+            // 开始读取文件
+            reader.readAsDataURL(file);
+        }
+        
+        // 点击上传关于页面图片按钮，触发文件选择
+        uploadAboutImageBtn.addEventListener('click', () => {
+            document.getElementById('aboutImage').click();
+        });
+        
+        // 文件选择变化时，自动上传
+        document.getElementById('aboutImage').addEventListener('change', (e) => {
+            handleAboutImageUpload(e.target.files);
+        });
+        
+        // 拖拽上传关于页面图片
+        aboutImageUploadContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            aboutImageUploadContainer.classList.add('border-blue-500', 'bg-blue-50');
+        });
+        
+        aboutImageUploadContainer.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            aboutImageUploadContainer.classList.remove('border-blue-500', 'bg-blue-50');
+        });
+        
+        aboutImageUploadContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            aboutImageUploadContainer.classList.remove('border-blue-500', 'bg-blue-50');
+            
+            // 处理拖拽的图片文件
+            const files = e.dataTransfer.files;
+            handleAboutImageUpload(files);
+        });
+        
+        // 添加设计板块
+        addDesignAreaBtn.addEventListener('click', () => {
+            addDesignAreaItem();
+        });
+        
+        // 添加奖项
+        addAwardBtn.addEventListener('click', () => {
+            addAwardItem();
+        });
+        
+        // 保存关于页面信息
+        aboutForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('aboutTitle').value;
+            const description = document.getElementById('aboutDescription').value;
+            const image = aboutImagePreview.querySelector('img').src;
+            
+            // 获取设计板块
+            const designAreas = [];
+            document.querySelectorAll('#designAreasContainer input').forEach(input => {
+                if (input.value.trim()) {
+                    designAreas.push(input.value.trim());
+                }
+            });
+            
+            // 获取奖项
+            const awards = [];
+            document.querySelectorAll('#awardsContainer input').forEach(input => {
+                if (input.value.trim()) {
+                    awards.push(input.value.trim());
+                }
+            });
+            
+            if (!title || !description) {
+                alert('请填写标题和描述！');
+                return;
+            }
+            
+            const aboutInfo = {
+                title,
+                description,
+                image,
+                designAreas,
+                awards
+            };
+            
+            localStorage.setItem('aboutInfo', JSON.stringify(aboutInfo));
+            
+            // 更新首页关于部分
+            updateIndexAboutSection();
+            
+            alert('关于页面信息保存成功！');
+        });
+        
+        // 更新首页关于部分
+        function updateIndexAboutSection() {
+            const aboutInfo = JSON.parse(localStorage.getItem('aboutInfo'));
+            localStorage.setItem('dataUpdated', 'true');
+        }
+        
+        // 清空数据
+        clearDataBtn.addEventListener('click', () => {
+            if (confirm('确定要清空所有数据吗？此操作不可恢复！')) {
+                localStorage.setItem('siteInfo', JSON.stringify(defaultSiteInfo));
+                localStorage.setItem('works', JSON.stringify(defaultWorks));
+                localStorage.setItem('dataUpdated', 'true');
+                
+                const defaultAboutInfo = {
+                    title: "关于予共筑造",
+                    description: "予共筑造由国内一线设计师组成的设计团队。团队成员曾服务过国内一线地产公司：万科、融信、融创、正荣、金地、旭辉，协信、普罗等地产商。目前团队主要从事高端楼盘会所设计、商业设计、软装设计等设计工作。",
+                    image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/86cede4ef50f47c48c04cfdeb9d25fb1~tplv-a9rns2rl98-image.image?rcl=20251216160829E409A1B6780165856DC4&rk3s=8e244e95&rrcfp=e75484ac&x-expires=1766477309&x-signature=De8bRTo7Zzr%2BbLIOZZhpgSfXJs%3D",
+                    designAreas: [
+                        "地产设计/会所设计/住宅设计等",
+                        "办公设计/商业设计等"
+                    ],
+                    awards: [
+                        "2024年 - 第27届 Andrew Martin 国际室内设计大奖中国区入选",
+                        "2024年 - 荣获2024年度MUSE DESIGN白金奖",
+                        "2023年 - \"ID+G\"金创意奖国际空间设计大赛—国际创新设计奖",
+                        "2022年 - 金盘网 浙江、上海赛区最佳售楼空间",
+                        "2021年 - REARD全球地产设计大奖 居住类室内铜奖",
+                        "2020年 - 15届金外滩奖 最佳样板间 优秀奖"
+                    ]
+                };
+                localStorage.setItem('aboutInfo', JSON.stringify(defaultAboutInfo));
+                
+                loadBasicInfo();
+                loadWorks();
+                loadAboutInfo();
+                
+                alert('数据已清空并恢复为默认值！');
+            }
+        });
+    </script>
+</body>
+</html>

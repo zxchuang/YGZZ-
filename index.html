@@ -1,0 +1,1547 @@
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Designer Portfolio | White Minimalist Style</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap');
+        
+        :root {
+            --primary-color: #000;
+            --secondary-color: #333;
+            --background-color: #fff;
+            --accent-color: #0066ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            overflow-x: hidden;
+            cursor: none;
+        }
+        
+        /* 自定义鼠标 */
+        #custom-cursor {
+            position: fixed;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #0066ff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: all 0.1s ease;
+            background-color: rgba(0, 102, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 102, 255, 0.5);
+        }
+        
+        #custom-cursor.hover {
+            width: 64px;
+            height: 64px;
+            background-color: rgba(0, 102, 255, 0.2);
+            border-width: 1px;
+        }
+        
+
+        
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem 4rem;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar.scrolled {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 4rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: flex-end;
+            gap: 3rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 300;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            display: inline-block;
+            padding: 0.2em 0;
+            min-height: 1.4em;
+            line-height: 1.4;
+        }
+
+        .nav-links a .original-text,
+        .nav-links a .hover-text {
+            position: relative;
+            display: block;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-links a .original-text {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .nav-links a .hover-text {
+            opacity: 0;
+            transform: translateY(100%);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* 屏幕容器 */
+        .screen {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        /* Hero 区域 */
+        #hero {
+            z-index: 50;
+        }
+        
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+        
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 200;
+            letter-spacing: -2px;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            font-weight: 300;
+            color: var(--secondary-color);
+            margin-bottom: 4rem;
+        }
+        
+        .hero-line {
+            width: 100px;
+            height: 1px;
+            background-color: var(--primary-color);
+            margin: 0 auto 4rem;
+        }
+        
+        .hero-btn {
+            display: inline-block;
+            padding: 1rem 3rem;
+            border: 1px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 300;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+        
+        /* 装饰线条 */
+        .decorative-line {
+            position: absolute;
+            background-color: var(--primary-color);
+            opacity: 0.1;
+        }
+        
+        .vertical-line {
+            width: 1px;
+            height: 100%;
+            top: 0;
+        }
+        
+        .horizontal-line {
+            height: 1px;
+            width: 100%;
+            left: 0;
+        }
+        
+        .line-1 {
+            display: none;
+        }
+        
+        .line-2 {
+            bottom: 10%;
+        }
+        
+        /* 作品展示区 */
+        #works {
+            z-index: 40;
+            padding: 10rem 4rem;
+        }
+        
+        .section-header {
+            margin-bottom: 6rem;
+            position: relative;
+        }
+        
+        .section-title {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 200;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 1px;
+            background-color: var(--primary-color);
+        }
+        
+        .section-description {
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: var(--secondary-color);
+            max-width: 600px;
+        }
+        
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 4rem;
+            justify-items: center;
+        }
+        
+        .work-item {
+            position: relative;
+            overflow: hidden;
+            cursor: none;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .work-item:hover {
+            transform: translateY(-10px);
+        }
+        
+        .work-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: all 0.5s ease;
+        }
+        
+        .work-item:hover .work-image {
+            transform: scale(1.05);
+        }
+        
+        .work-info {
+            padding: 2rem 0;
+        }
+        
+        .work-title {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+        
+        .work-category {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .work-line {
+            width: 30px;
+            height: 1px;
+            background-color: var(--primary-color);
+        }
+        
+        /* 平板设备优化 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            #works {
+                padding: 8rem 3rem;
+            }
+            
+            .works-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2.5rem;
+            }
+            
+            .work-item {
+                max-width: 100%;
+            }
+            
+            .work-image {
+                height: 250px;
+            }
+            
+            .section-header {
+                margin-bottom: 4rem;
+            }
+        }
+        
+        .work-info {
+            padding: 2rem 0;
+        }
+        
+        .work-title {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+        
+        .work-category {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .work-line {
+            width: 30px;
+            height: 1px;
+            background-color: var(--primary-color);
+        }
+        
+        /* 关于我区域 */
+        #about {
+            z-index: 30;
+            padding: 10rem 4rem;
+            background-color: #fafafa;
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6rem;
+            align-items: center;
+        }
+        
+        .about-text h2 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 200;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .about-text h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 50px;
+            height: 1px;
+            background-color: var(--primary-color);
+        }
+        
+        .about-description {
+            font-size: 1.1rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: var(--secondary-color);
+            margin-bottom: 3rem;
+        }
+        
+        .about-details {
+            list-style: none;
+        }
+        
+        .about-details li {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .about-details li::before {
+            content: '';
+            width: 10px;
+            height: 1px;
+            background-color: var(--primary-color);
+            margin-right: 1rem;
+        }
+        
+        .about-image {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* 设计流程区 */
+        #process {
+            z-index: 30;
+            padding: 10rem 4rem;
+            background-color: #fafafa;
+        }
+        
+        .process-steps {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4rem;
+            margin-top: 6rem;
+        }
+        
+        .process-step {
+            position: relative;
+            padding-left: 8rem;
+        }
+        
+        .process-step::before {
+            content: '';
+            position: absolute;
+            left: 3rem;
+            top: 6rem;
+            width: 1px;
+            height: calc(100% - 3rem);
+            background-color: var(--primary-color);
+            opacity: 0.1;
+        }
+        
+        .process-step:last-child::before {
+            display: none;
+        }
+        
+        .process-step-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+        
+        .process-step-number {
+            font-size: 3rem;
+            font-weight: 200;
+            color: var(--secondary-color);
+            margin-right: 2rem;
+            line-height: 1;
+        }
+        
+        .process-step-title {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+        
+        .process-step-content {
+            max-width: 800px;
+        }
+        
+        .process-step-description {
+            font-size: 1.1rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: var(--secondary-color);
+            margin-bottom: 2rem;
+        }
+        
+        .process-step-deliverables {
+            margin-top: 2rem;
+        }
+        
+        .process-step-subtitle {
+            font-size: 1.2rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+        
+        .process-step-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .process-step-list li {
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .process-step-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.8rem;
+            width: 8px;
+            height: 1px;
+            background-color: var(--primary-color);
+        }
+        
+        .process-step-notes {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--primary-color);
+            opacity: 0.1;
+        }
+        
+        .process-step-note {
+            font-size: 1rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        
+        .process-step-notes-list {
+            padding-left: 1.5rem;
+        }
+        
+        .process-step-notes-list li {
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+        
+        /* 设计流程区 - 响应式设计 */
+        @media (max-width: 768px) {
+            #process {
+                padding: 6rem 2rem;
+            }
+            
+            .process-step {
+                padding-left: 0;
+                padding-top: 4rem;
+                position: relative;
+            }
+            
+            .process-step::before {
+                left: 50%;
+                top: 0;
+                width: calc(100% - 4rem);
+                height: 1px;
+                transform: translateX(-50%);
+            }
+            
+            .process-step:first-child {
+                padding-top: 0;
+            }
+            
+            .process-step:first-child::before {
+                display: none;
+            }
+            
+            .process-step-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                margin-bottom: 2rem;
+                position: relative;
+            }
+            
+            .process-step-number {
+                font-size: 2.5rem;
+                margin-right: 0;
+                margin-bottom: 1rem;
+                position: relative;
+            }
+            
+            .process-step-title {
+                font-size: 1.5rem;
+            }
+            
+            .process-step-content {
+                max-width: 100%;
+            }
+            
+            .process-step-description {
+                font-size: 1rem;
+            }
+            
+            .process-step-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .process-step-list li {
+                font-size: 0.95rem;
+                padding-left: 1.2rem;
+            }
+            
+            .process-step-notes {
+                padding-top: 1.5rem;
+            }
+            
+            .process-step-notes-list {
+                padding-left: 1.2rem;
+            }
+            
+            .process-step-notes-list li {
+                font-size: 0.95rem;
+            }
+        }
+        
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 1px;
+            background-color: var(--primary-color);
+            opacity: 0.2;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: 4rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+        }
+        
+        .timeline-date {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-title {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        
+        .timeline-company {
+            font-size: 1rem;
+            font-weight: 300;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .timeline-description {
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.6;
+            color: var(--secondary-color);
+        }
+        
+        /* 联系区域 */
+        #contact {
+            z-index: 10;
+            padding: 10rem 4rem;
+            background-color: #fafafa;
+            text-align: center;
+        }
+        
+        .contact-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .contact-title {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 200;
+            margin-bottom: 2rem;
+        }
+        
+        .contact-line {
+            width: 50px;
+            height: 1px;
+            background-color: var(--primary-color);
+            margin: 0 auto 3rem;
+        }
+        
+        .contact-description {
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: var(--secondary-color);
+            margin-bottom: 4rem;
+            line-height: 1.8;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .contact-icon {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-text {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: var(--secondary-color);
+        }
+        
+        .contact-btn {
+            display: inline-block;
+            padding: 1rem 3rem;
+            border: 1px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 300;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+        
+        /* 页脚 */
+        footer {
+            padding: 4rem;
+            text-align: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .footer-content {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: var(--secondary-color);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1.5rem 2rem;
+            }
+            
+            .nav-links {
+                gap: 2rem;
+            }
+            
+            #works, #about, #experience, #contact {
+                padding: 6rem 2rem;
+            }
+            
+            .works-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                gap: 2rem;
+            }
+        }
+        
+        /* 作品详情页样式 */
+        .work-detail-container {
+            padding: 8rem 4rem 4rem;
+        }
+        
+        .work-detail-header {
+            margin-bottom: 6rem;
+        }
+        
+        .work-detail-title {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 200;
+            margin-bottom: 1rem;
+        }
+        
+        .work-detail-meta {
+            display: flex;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: var(--secondary-color);
+        }
+        
+        .work-detail-description {
+            font-size: 1.1rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: var(--secondary-color);
+            max-width: 800px;
+            margin-bottom: 4rem;
+        }
+        
+        .work-detail-image {
+            width: 100%;
+            height: auto;
+            margin-bottom: 4rem;
+            object-fit: cover;
+        }
+        
+        .work-detail-section {
+            margin-bottom: 6rem;
+        }
+        
+        .work-detail-section h3 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .work-detail-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 30px;
+            height: 1px;
+            background-color: var(--primary-color);
+        }
+        
+        .work-detail-section p {
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: var(--secondary-color);
+            margin-bottom: 2rem;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-top: 4rem;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: var(--accent-color);
+        }
+        
+        .back-link i {
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 自定义鼠标 -->
+    <div id="custom-cursor"></div>
+
+    
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li><a href="#hero" data-hover="首页">HOME</a></li>
+            <li><a href="#works" data-hover="作品">WORKS</a></li>
+            <li><a href="#about" data-hover="关于">ABOUT</a></li>
+            <li><a href="#process" data-hover="设计流程">PROCESS</a></li>
+            <li><a href="#contact" data-hover="联系">CONTACT</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Hero 区域 -->
+    <section id="hero" class="screen">
+        <div class="decorative-line vertical-line line-1"></div>
+        <div class="decorative-line horizontal-line line-2"></div>
+        
+        <div class="hero-content">
+            <h1 class="hero-title" id="siteTitle">予共筑造</h1>
+            <div class="hero-line"></div>
+            <p class="hero-subtitle" id="siteSubtitle">给予不同客户共同美好事物，致力于美好生活场景设计。</p>
+            <a href="#works" class="hero-btn hover-effect">查看作品</a>
+        </div>
+    </section>
+    
+    <!-- 作品展示区 -->
+    <section id="works" class="screen">
+        <div class="container mx-auto">
+            <div class="section-header">
+                <h2 class="section-title">精选作品</h2>
+                <p class="section-description">过往项目案例</p>
+            </div>
+            
+            <div class="works-grid">
+                <div class="work-item hover-effect">
+                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/840866df72bc4a9b97d946a636ae1a27~tplv-a9rns2rl98-image.image?rcl=202512161040367BBAF11667D8C3CE0FE9&amp;rk3s=8e244e95&amp;rrcfp=e75484ac&amp;x-expires=1766457636&amp;x-signature=Qob4L%2BDk9zDLkfo38fpxjbuhr5I%3D" alt="极简住宅设计" class="work-image">
+                    <div class="work-info">
+                        <h3 class="work-title">住宅设计</h3>
+                        <p class="work-category">室内设计</p>
+                        <div class="work-line"></div>
+                    </div>
+                </div>
+                
+                <div class="work-item hover-effect">
+                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/3ce74f0e8adb4378a3fc8b053bf0b15f~tplv-a9rns2rl98-image.image?rcl=20251216101414D489CB2C4AD988E5E732&amp;rk3s=8e244e95&amp;rrcfp=f06b921b&amp;x-expires=1768443283&amp;x-signature=NrGbqGxSZgRAVTNR%2FBXQ52%2FqtQc%3D" alt="几何形态研究" class="work-image">
+                    <div class="work-info">
+                        <h3 class="work-title">几何形态研究</h3>
+                        <p class="work-category">产品设计</p>
+                        <div class="work-line"></div>
+                    </div>
+                </div>
+                
+                <div class="work-item hover-effect">
+                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/966e6f6c33904a799771c4ea5b577500~tplv-a9rns2rl98-image.image?rcl=20251216101414D489CB2C4AD988E5E732&amp;rk3s=8e244e95&amp;rrcfp=f06b921b&amp;x-expires=1768443270&amp;x-signature=HXro4WrwznZhYO%2FdKWlFq5Yh8TQ%3D" alt="办公空间设计" class="work-image">
+                    <div class="work-info">
+                        <h3 class="work-title">办公空间设计</h3>
+                        <p class="work-category">室内设计</p>
+                        <div class="work-line"></div>
+                    </div>
+                </div>
+                
+                <div class="work-item hover-effect">
+                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/3ce74f0e8adb4378a3fc8b053bf0b15f~tplv-a9rns2rl98-image.image?rcl=20251216101414D489CB2C4AD988E5E732&amp;rk3s=8e244e95&amp;rrcfp=f06b921b&amp;x-expires=1768443283&amp;x-signature=NrGbqGxSZgRAVTNR%2FBXQ52%2FqtQc%3D" alt="极简主义灯具" class="work-image">
+                    <div class="work-info">
+                        <h3 class="work-title">极简主义灯具</h3>
+                        <p class="work-category">产品设计</p>
+                        <div class="work-line"></div>
+                    </div>
+                </div>
+                
+                <div class="work-item hover-effect">
+                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/966e6f6c33904a799771c4ea5b577500~tplv-a9rns2rl98-image.image?rcl=20251216101414D489CB2C4AD988E5E732&amp;rk3s=8e244e95&amp;rrcfp=f06b921b&amp;x-expires=1768443270&amp;x-signature=HXro4WrwznZhYO%2FdKWlFq5Yh8TQ%3D" alt="现代公寓改造" class="work-image">
+                    <div class="work-info">
+                        <h3 class="work-title">现代公寓改造</h3>
+                        <p class="work-category">室内设计</p>
+                        <div class="work-line"></div>
+                    </div>
+                </div>
+                
+                <div class="work-item hover-effect">
+                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/3ce74f0e8adb4378a3fc8b053bf0b15f~tplv-a9rns2rl98-image.image?rcl=20251216101414D489CB2C4AD988E5E732&amp;rk3s=8e244e95&amp;rrcfp=f06b921b&amp;x-expires=1768443283&amp;x-signature=NrGbqGxSZgRAVTNR%2FBXQ52%2FqtQc%3D" alt="概念家具系列" class="work-image">
+                    <div class="work-info">
+                        <h3 class="work-title">概念家具系列</h3>
+                        <p class="work-category">产品设计</p>
+                        <div class="work-line"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 关于我区域 -->
+    <section id="about" class="screen">
+        <div class="container mx-auto">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2 style="font-weight: bold; color: rgb(3, 2, 2);">关于予共筑造</h2>
+                    <p class="about-description">予共筑造由国内一线设计师组成的设计团队。团队成员曾服务过国内一线地产公司：万科、融信、融创、正荣、金地、旭辉，协信、普罗等地产商。目前团队主要从事高端楼盘会所设计、商业设计、软装设计等设计工作。</p>
+                    <p class="about-description">
+                        我的设计理念源于对细节的极致追求和对用户体验的深刻理解。我擅长将复杂的问题简化为优雅的解决方案，创造出既美观又实用的设计作品。
+                    </p>
+                    <div class="about-details"></div>
+                </div>
+                <div class="about-image">
+                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/86cede4ef50f47c48c04cfdeb9d25fb1~tplv-a9rns2rl98-image.image?rcl=20251216160829E409A1B6780165856DC4&amp;rk3s=8e244e95&amp;rrcfp=e75484ac&amp;x-expires=1766477309&amp;x-signature=De8bRTo7Zzr%2B%2FLIOZZh%2FpgSfXJs%3D" alt="关于我">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    
+    <!-- 设计流程区域 -->
+    <section id="process" class="screen">
+        <div class="container mx-auto">
+            <div class="section-header">
+                <h2 class="section-title">设计流程</h2>
+                <p class="section-description">我们的专业设计流程确保项目从概念到实施的每一步都精准无误</p>
+            </div>
+            
+            <div class="process-content">
+                <div class="process-steps">
+                    <!-- 概念设计 -->
+                    <div class="process-step">
+                        <div class="process-step-header">
+                            <div class="process-step-number">01</div>
+                            <h3 class="process-step-title">概念设计  1~2周</h3>
+                        </div>
+                        <div class="process-step-content">
+                            <p class="process-step-description">
+                                主要了解该项目的概况及客户的设计要求及产品定位，并要求业主提供相关的技术数据，根据业主所提供的设计资料及设计要求，并配合进行概念性设计。
+                            </p>
+                            <div class="process-step-deliverables">
+                                <h4 class="process-step-subtitle">本阶段提供以下设计成果：</h4>
+                                <ul class="process-step-list">
+                                    <li>设计说明：设计理念描述</li>
+                                    <li>设计平面：优化平面布局</li>
+                                    <li>概念图片：明确阐述设计风格</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 深化设计 -->
+                    <div class="process-step">
+                        <div class="process-step-header">
+                            <div class="process-step-number">02</div>
+                            <h3 class="process-step-title">深化设计 4~6周</h3>
+                        </div>
+                        <div class="process-step-content">
+                            <p class="process-step-description">
+                                根据双方对概念设计讨论的修改意见进行深化方案设计。
+                            </p>
+                            <div class="process-step-deliverables">
+                                <h4 class="process-step-subtitle">本阶段提供以下设计成果：</h4>
+                                <ul class="process-step-list">
+                                    <li>设计说明：设计理念描述</li>
+                                    <li>设计平面：优化平面布局</li>
+                                    <li>深化效果图：主要空间效果图及次要空间模型</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 施工图设计 -->
+                    <div class="process-step">
+                        <div class="process-step-header">
+                            <div class="process-step-number">03</div>
+                            <h3 class="process-step-title">施工图设计 3~4周</h3>
+                        </div>
+                        <div class="process-step-content">
+                            <p class="process-step-description">
+                                根据确认的深化设计方案，进行施工图细节设计。
+                            </p>
+                            <div class="process-step-deliverables">
+                                <h4 class="process-step-subtitle">本阶段提供以下设计成果：</h4>
+                                <ul class="process-step-list">
+                                    <li>设计说明及图纸目录</li>
+                                    <li>平面图系统图</li>
+                                    <li>立面图系统图</li>
+                                    <li>标准详图</li>
+                                    <li>物料清单</li>
+                                </ul>
+                                <div class="process-step-notes">
+                                    <p class="process-step-note">备注：</p>
+                                    <ol class="process-step-notes-list">
+                                        <li>所有材料、设备、固定家具的选择应充分结合客户提供的成本限额进行考虑；</li>
+                                        <li>施工图设计成果提供A3/A2图纸及电子文件</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 现场服务 -->
+                    <div class="process-step">
+                        <div class="process-step-header">
+                            <div class="process-step-number">04</div>
+                            <h3 class="process-step-title">现场服务 </h3>
+                        </div>
+                        <div class="process-step-content">
+                            <p class="process-step-description">
+                                提供施工过程中的技术支持和现场指导，确保设计方案的准确实施。
+                            </p>
+                            <div class="process-step-deliverables">
+                                <h4 class="process-step-subtitle">本阶段提供以下服务：</h4>
+                                <ul class="process-step-list">
+                                    <li>施工交底：向施工团队详细说明设计意图和技术要求</li>
+                                    <li>现场指导：定期到施工现场解决技术问题</li>
+                                    <li>材料验收：协助客户确认主要材料和设备的质量</li>
+                                    <li>竣工验收：参与项目验收，确保设计效果的实现</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="contact" class="screen">
+        <div class="container mx-auto">
+            <div class="contact-content">
+                <h2 class="contact-title">联系我</h2>
+                <div class="contact-line"></div>
+                <p class="contact-description">
+                    如果您对我的作品感兴趣，或者有任何合作机会，请随时与我联系。我期待与您一起创造出令人惊叹的设计作品。
+                </p>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope contact-icon"></i>
+                        <span class="contact-text">315149019@qq.com</span>
+                    </div>
+                    
+
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt contact-icon"></i>
+                        <span class="contact-text">上海市, 中国</span>
+                    </div>
+                </div>
+                
+                <a href="mailto:alex.chen@example.com" class="contact-btn hover-effect">发送邮件</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <p>© 2025 YG. 保留所有权利。</p>
+            <p class="text-sm font-light tracking-widest"><a href="admin.html" class="hover-effect">YG DESIGN</a></p>
+        </div>
+    </footer>
+    
+    <script>
+        // 自定义鼠标效果
+        const cursor = document.getElementById('custom-cursor');
+
+        let mouseX = 0;
+        let mouseY = 0;
+        let cursorX = 0;
+        let cursorY = 0;
+        
+        // 显示光标
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.opacity = '1';
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+        
+        // 鼠标离开页面时隐藏
+        document.addEventListener('mouseleave', () => {
+            cursor.style.opacity = '0';
+        });
+        
+        // 平滑跟随效果
+        function animateCursor() {
+            const speed = 0.2;
+            cursorX += (mouseX - cursorX) * speed;
+            cursorY += (mouseY - cursorY) * speed;
+            
+            cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+            requestAnimationFrame(animateCursor);
+        }
+        
+        animateCursor();
+        
+        // 悬停效果
+        const hoverElements = document.querySelectorAll('.hover-effect');
+        hoverElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                cursor.classList.add('hover');
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                cursor.classList.remove('hover');
+            });
+        });
+        
+        // 导航栏滚动效果
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // 作品项点击事件
+        const workItems = document.querySelectorAll('.work-item');
+        workItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                window.location.href = `works/work${index + 1}.html`;
+            });
+        });
+        
+        // 中英文切换功能
+        const translations = {
+            '首页': 'Home',
+            '作品': 'Works',
+            '关于': 'About',
+            '经验': 'Experience',
+            '联系': 'Contact',
+            'Minimalist Product Designer & UI/UX Specialist': '极简主义产品设计师 & UI/UX 专家',
+            'View Works': '查看作品',
+            'Selected Works': '精选作品',
+            'Explore my design portfolio, where each project embodies minimalist design philosophy and meticulous attention to detail.': '探索我的设计作品集，每个项目都体现了极简主义设计理念和对细节的极致追求。',
+            'Minimalist Residential Design': '极简住宅设计',
+            'Interior Design': '室内设计',
+            'Geometric Form Study': '几何形态研究',
+            'Product Design': '产品设计',
+            'Office Space Design': '办公空间设计',
+            'Minimalist Lighting': '极简主义灯具',
+            'Modern Apartment Renovation': '现代公寓改造',
+            'Concept Furniture Series': '概念家具系列',
+            'About Me': '关于我',
+            'I am a product designer and UI/UX specialist focused on minimalist design with over 8 years of industry experience. I believe design should be simple, functional, and beautiful, revealing the essence of beauty by removing unnecessary elements.': '我是一名专注于极简主义设计的产品设计师和UI/UX专家，拥有超过8年的行业经验。我相信设计应该是简洁、实用且美观的，通过去除多余的元素，让本质的美得以展现。',
+            'My design philosophy stems from meticulous attention to detail and deep understanding of user experience. I excel at simplifying complex problems into elegant solutions, creating designs that are both aesthetically pleasing and highly functional.': '我的设计理念源于对细节的极致追求和对用户体验的深刻理解。我擅长将复杂的问题简化为优雅的解决方案，创造出既美观又实用的设计作品。',
+            'Product Design': '产品设计',
+            'UI/UX Design': 'UI/UX设计',
+            'Interior Design': '室内设计',
+            'Brand Design': '品牌设计',
+            '3D Modeling & Rendering': '3D建模与渲染',
+            'Experience': '经验背景',
+            'My professional journey and educational background.': '我的专业旅程和教育背景。',
+            'Senior Product Designer': '高级产品设计师',
+            'Responsible for product design projects for international clients, from concept development to final delivery. Led the design team to complete multiple award-winning projects, enhancing client brand value and user experience.': '负责多个国际客户的产品设计项目，包括从概念构思到最终交付的全过程。带领设计团队完成了多个获奖项目，提升了客户品牌价值和用户体验。',
+            'UI/UX Designer': 'UI/UX设计师',
+            'Designed and optimized user interfaces and experiences, creating interactive prototypes for multiple application and website projects. Collaborated closely with development teams to ensure precise implementation of designs.': '设计和优化用户界面和用户体验，为多个应用程序和网站项目创建交互原型。与开发团队紧密合作，确保设计的精确实现。',
+            'Interior Designer': '室内设计师',
+            'Responsible for interior design projects for residential and commercial spaces, focusing on minimalist and functional design. Worked closely with clients to create living and working environments that are both aesthetically pleasing and practical.': '负责住宅和商业空间的室内设计项目，专注于极简主义和功能性设计。与客户密切合作，创造既美观又实用的生活和工作环境。',
+            'Bachelor of Design': '设计学学士',
+            'Central Academy of Fine Arts': '中央美术学院',
+            'Majored in Product Design with a minor in Interior Design. Received Outstanding Graduate Award, and毕业设计 won the Gold Award in the Academy Design Competition.': '主修产品设计，辅修室内设计。获得优秀毕业生称号，毕业设计获得学院设计大赛金奖。',
+            'Contact Me': '联系我',
+            'If you are interested in my work or have any collaboration opportunities, please feel free to contact me. I look forward to creating amazing design works with you.': '如果您对我的作品感兴趣，或者有任何合作机会，请随时与我联系。我期待与您一起创造出令人惊叹的设计作品。',
+            'alex.chen@example.com': 'alex.chen@example.com',
+            '+86 138 1234 5678': '+86 138 1234 5678',
+            'Shanghai, China': '上海市, 中国',
+            'Send Email': '发送邮件',
+            '&copy; 2025 Alex Chen. All Rights Reserved.': '&copy; 2025 Alex Chen. 保留所有权利。'
+        };
+        
+        // 为导航栏链接添加英文显示、悬停显示中文的功能（优化频闪）
+        const navLinks = document.querySelectorAll('.nav-links a');
+        navLinks.forEach(link => {
+            const originalText = link.textContent; // 英文
+            const hoverText = link.getAttribute('data-hover'); // 中文
+            
+            // 创建一个包含中文文本的span元素
+            const hoverSpan = document.createElement('span');
+            hoverSpan.className = 'hover-text';
+            hoverSpan.textContent = hoverText;
+            
+            // 将原始文本包装在span中
+            const originalSpan = document.createElement('span');
+            originalSpan.className = 'original-text';
+            originalSpan.textContent = originalText;
+            
+            // 清空链接内容并添加两个span元素
+            link.innerHTML = '';
+            link.appendChild(originalSpan);
+            link.appendChild(hoverSpan);
+            
+            // 添加鼠标事件监听
+            link.addEventListener('mouseenter', () => {
+                originalSpan.style.opacity = '0';
+                originalSpan.style.transform = 'translateY(-100%)';
+                hoverSpan.style.opacity = '1';
+                hoverSpan.style.transform = 'translateY(0)';
+            });
+            
+            link.addEventListener('mouseleave', () => {
+                originalSpan.style.opacity = '1';
+                originalSpan.style.transform = 'translateY(0)';
+                hoverSpan.style.opacity = '0';
+                hoverSpan.style.transform = 'translateY(100%)';
+            });
+        });
+        
+        // 滚动差分效果
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // 第一屏和第二屏之间的过渡
+        gsap.to('#works', {
+            scrollTrigger: {
+                trigger: '#hero',
+                start: 'bottom top',
+                end: 'bottom 50%',
+                scrub: 1,
+            },
+            y: 0,
+            opacity: 1,
+            ease: 'power2.out'
+        });
+        
+        // 第二屏和第三屏之间的过渡
+        gsap.to('#about', {
+            scrollTrigger: {
+                trigger: '#works',
+                start: 'bottom top',
+                end: 'bottom 50%',
+                scrub: 1,
+            },
+            y: 0,
+            opacity: 1,
+            ease: 'power2.out'
+        });
+        
+        // 第三屏和第四屏之间的过渡
+        gsap.to('#contact', {
+            scrollTrigger: {
+                trigger: '#about',
+                start: 'bottom top',
+                end: 'bottom 50%',
+                scrub: 1,
+            },
+            y: 0,
+            opacity: 1,
+            ease: 'power2.out'
+        });
+        
+        // 元素入场动画
+        gsap.utils.toArray('.section-title, .section-description, .work-item, .timeline-item').forEach(element => {
+            gsap.from(element, {
+                scrollTrigger: {
+                    trigger: element,
+                    start: 'top 80%',
+                    toggleActions: 'play none none none'
+                },
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                ease: 'power2.out'
+            });
+        });
+
+        // 从localStorage加载网站数据
+        function loadSiteDataFromStorage() {
+            loadSiteInfoFromStorage();
+            loadWorksFromStorage();
+            loadAboutInfoFromStorage();
+        }
+        
+        // 从localStorage加载基本信息
+        function loadSiteInfoFromStorage() {
+            try {
+                const siteInfo = JSON.parse(localStorage.getItem('siteInfo'));
+                if (siteInfo) {
+                    // 更新网站标题
+                    const siteTitle = document.querySelector('#hero .hero-title');
+                    if (siteTitle) {
+                        siteTitle.textContent = siteInfo.title;
+                    }
+                    
+                    // 更新网站副标题
+                    const siteSubtitle = document.querySelector('#hero .hero-subtitle');
+                    if (siteSubtitle) {
+                        siteSubtitle.textContent = siteInfo.subtitle;
+                    }
+                    
+                    // 更新作品区标题
+                    const worksSectionTitle = document.querySelector('#works .section-title');
+                    if (worksSectionTitle) {
+                        worksSectionTitle.textContent = siteInfo.worksSectionTitle;
+                    }
+                    
+                    // 更新作品区描述
+                    const worksSectionDescription = document.querySelector('#works .section-description');
+                    if (worksSectionDescription) {
+                        worksSectionDescription.textContent = siteInfo.worksSectionDescription;
+                    }
+                }
+            } catch (error) {
+                console.error('加载网站基本信息失败:', error);
+            }
+        }
+        
+        // 从localStorage加载作品数据
+        function loadWorksFromStorage() {
+            try {
+                const works = JSON.parse(localStorage.getItem('works'));
+                if (works && works.length > 0) {
+                    const worksGrid = document.querySelector('#works .works-grid');
+                    if (worksGrid) {
+                        // 清空现有作品
+                        worksGrid.innerHTML = '';
+                        
+                        // 添加新作品
+                        works.forEach((work, index) => {
+                            const workItem = document.createElement('div');
+                            workItem.className = 'work-item hover-effect';
+                            
+                            // 确保作品有图片数据，如果没有则使用占位符
+                            const imageSrc = work.images && work.images.length > 0 ? work.images[0] : 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22300%22%20height%3D%22300%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20300%20300%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_18bc2c9e723%20text%20%7B%20fill%3Argba(153%2C153%2C153%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A15pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_18bc2c9e723%22%3E%3Crect%20width%3D%22300%22%20height%3D%22300%22%20fill%3D%22%23f5f5f5%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22115.5%22%20y%3D%22159.6%22%3E300x300%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E';
+                            
+                            let workContent = `
+                                <img src="${imageSrc}" alt="${work.title}" class="work-image">
+                                <div class="work-info">
+                                    <h3 class="work-title">${work.title || 'Untitled'}</h3>
+                                    <p class="work-category">${work.category || 'No category'}</p>
+                                    <div class="work-line"></div>
+                                </div>
+                            `;
+                            
+                            workItem.innerHTML = workContent;
+                            
+                            // 添加点击事件
+                            workItem.addEventListener('click', () => {
+                                window.location.href = `works/work${index + 1}.html`;
+                            });
+                            
+                            worksGrid.appendChild(workItem);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('加载作品数据失败:', error);
+            }
+        }
+        
+        // 从localStorage加载关于页面数据
+        function loadAboutInfoFromStorage() {
+            try {
+                const aboutInfo = JSON.parse(localStorage.getItem('aboutInfo'));
+                if (aboutInfo) {
+                    // 更新标题
+                    const aboutTitle = document.querySelector('#about .about-text h2');
+                    if (aboutTitle) {
+                        aboutTitle.textContent = aboutInfo.title;
+                    }
+                    
+                    // 更新描述
+                    const aboutDescription = document.querySelector('#about .about-description');
+                    if (aboutDescription) {
+                        aboutDescription.textContent = aboutInfo.description;
+                    }
+                    
+                    // 更新图片
+                    const aboutImage = document.querySelector('#about .about-image img');
+                    if (aboutImage && aboutInfo.image) {
+                        aboutImage.src = aboutInfo.image;
+                        aboutImage.alt = aboutInfo.title;
+                    }
+                    
+                    // 更新设计板块和奖项
+                    const aboutDetails = document.querySelector('#about .about-details');
+                    if (aboutDetails && aboutInfo.designAreas && aboutInfo.awards) {
+                        // 清空现有内容
+                        aboutDetails.innerHTML = '';
+                        
+                        // 添加设计板块标题
+                        const designTitle = document.createElement('h3');
+                        designTitle.className = 'text-xl font-light mb-4 mt-8';
+                        designTitle.textContent = '设计板块';
+                        aboutDetails.appendChild(designTitle);
+                        
+                        // 添加设计板块列表
+                        const designList = document.createElement('ul');
+                        designList.className = 'about-details mb-8';
+                        aboutInfo.designAreas.forEach(area => {
+                            const li = document.createElement('li');
+                            li.textContent = area;
+                            designList.appendChild(li);
+                        });
+                        aboutDetails.appendChild(designList);
+                        
+                        // 添加奖项标题
+                        const awardsTitle = document.createElement('h3');
+                        awardsTitle.className = 'text-xl font-light mb-4';
+                        awardsTitle.textContent = '荣获奖项';
+                        aboutDetails.appendChild(awardsTitle);
+                        
+                        // 添加奖项列表
+                        const awardsList = document.createElement('ul');
+                        awardsList.className = 'about-details';
+                        aboutInfo.awards.forEach(award => {
+                            const li = document.createElement('li');
+                            li.textContent = award;
+                            awardsList.appendChild(li);
+                        });
+                        aboutDetails.appendChild(awardsList);
+                    }
+                }
+            } catch (error) {
+                console.error('加载关于页面数据失败:', error);
+            }
+        }
+        
+        // 页面加载时从localStorage加载数据
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSiteDataFromStorage();
+            
+            // 监听localStorage变化，实时更新
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'siteInfo' || e.key === 'works' || e.key === 'aboutInfo' || e.key === 'dataUpdated') {
+                    loadSiteDataFromStorage();
+                    if (e.key === 'dataUpdated') {
+                        localStorage.setItem('dataUpdated', 'false');
+                    }
+                }
+            });
+        });
+    </script>
+
+</body></html>
